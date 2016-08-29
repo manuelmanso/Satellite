@@ -16,7 +16,7 @@ def create_and_draw_objects(sat_info):
     
     #earth.rotate(angle=0.01745, axis=(0,0,1), origin=earth.pos)
 
-    equator = ring(pos=(0,0,0),color=color.red, axis=(0,0,1),
+    equator = ring(pos=(0,0,0),color=color.red, axis=(1,1,1),
                    radius=6371, thickness=50)
 
     ecliptic = ring(pos=(0,0,0),color=color.orange, axis=(0,0,1),
