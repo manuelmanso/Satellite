@@ -13,18 +13,20 @@ def create_and_draw_objects(sat_info):
 
     earth = sphere(pos=(0,0,0), radius= 6371, material = materials.earth,
                   up=(0,0,1))
+    
     """
+    sun = sphere(pos=(149600000,0,0), color=color.orange, radius = 695.700)
     earth.rotate(angle=0.01745, axis=(0,0,1), origin=earth.pos)
     equator = ring(pos=(0,0,0),color=color.red, axis=(0,0,1),
                    radius=6371, thickness=50)
     ecliptic_vector = rotate((0,0,1), angle = 0.4084, axis=(1,0,0))
     ecliptic = ring(pos=(0,0,0),color=color.orange, axis=ecliptic_vector,
                    radius=6371, thickness=50)
-    """
     
     X_loc_blue = sphere(pos=(7500,0,0), color=color.blue, radius= 500)
     Y_loc_yellow = sphere(pos=(0,7500,0), color=color.yellow, radius= 500)
     Z_loc_green = sphere(pos=(0,0,7500), color=color.green, radius= 500)
+    """
     
     satelite = box(pos=(sat_info["day1"]["sat_x_pos"],
                         sat_info["day1"]["sat_y_pos"],
