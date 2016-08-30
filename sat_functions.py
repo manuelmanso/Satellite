@@ -7,9 +7,9 @@ def create_and_draw_objects():
     scene = display(width = 800, height = 800, forward=(-1,0,0), up=(0,0,1))
     
     draw_lights()
-    
-    time = text(text="Time: ",pos = (0,2000,9000), color=color.orange, up=(0,0,1),
-                    width =1000, height = 1000, axis= (0,1,0))
+
+    time= label(pos=(0,9000,17000), text='Time: ')
+    #time= label(pos=(0,150000,200000), text='Time: ')
 
     earth = sphere(pos=(0,0,0), radius= 6371, material = materials.earth,
                    up=(0,0,1))
@@ -17,7 +17,9 @@ def create_and_draw_objects():
     satelite = box(pos=(0,0,0), length = 100,  width=100, height=100,
                    color=color.red, make_trail=false)
 
-    return satelite, earth, time
+    star_arrow = arrow(pos=(0,0,0), axis=(0,1,0), shaftwidth=100)
+
+    return satelite, earth, time, star_arrow
 
     """
     sun = sphere(pos=(149600000,0,0), color=color.orange, radius = 695.700)
@@ -27,7 +29,6 @@ def create_and_draw_objects():
     Y_loc_yellow = sphere(pos=(0,7500,0), color=color.yellow, radius= 500)
     Z_loc_green = sphere(pos=(0,0,7500), color=color.green, radius= 500)
     """
-
 
 def draw_lights():
     """lights the scene"""
@@ -57,8 +58,36 @@ def convert_julian_to_real_time(julian_time):
     minutes = int(math.ceil(float(minutes)/60))
 
     return day, hours, minutes
+
+def calc_arrow_pos_and_axis(star_arrow, satelite, earth):
+    star_arrow.pos = satelite.pos
     
-def end_loop():
+    declination = 0000.357728
+    right_ascension = 0001.338847
+    declination_vector = rotate((1,0,0), angle=declination, axis=(0,-1,0))
+    right_ascension_vector = rotate((1,0,0), angle=right_ascension, axis=(0,0,1))
+    star_direction = declination_vector + right_ascension_vector
+    star_distance = 15000
+    star_pos= star_direction*star_distance
+    
+    star_arrow.axis = star_pos - satelite.pos
+    
+    if check_collision_arrow_earth(star_arrow, earth):
+        star_arrow.visible = False
+    else:
+        star_arrow.visible = True
+    
+    return star_arrow.pos, star_arrow.axis
+
+def check_collision_arrow_earth(star_arrow, earth):
+    projection = proj(-star_arrow.pos, star_arrow.axis)
+    closest_point_to_earth = star_arrow.pos + projection
+    if mag(closest_point_to_earth) <= earth.radius:
+        return True
+    else:
+        return False
+
+def end_loop(satelite):
     """if there is no more positional info the satelite stops and turns green"""
     
     while True:
