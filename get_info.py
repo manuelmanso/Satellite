@@ -21,13 +21,13 @@ def create_sat_info_dict(lst):
 
         sat_info_dict["Info Entry "+str(info_entry)]={"star" : temp_list[0] + temp_list[1] + temp_list[2],
                                       "rotation_period" : float(temp_list[3]),
-                                      "sat_declination" : float(temp_list[4]),
-                                      "sat_right_ascension" : float(temp_list[5]),
+                                      "declination" : float(temp_list[4]),
+                                      "right_ascension" : float(temp_list[5]),
                                       "time" : float(temp_list[6]),
                                       "sat_x_pos" : int(float(temp_list[7]))/1000,
                                       "sat_y_pos" : int(float(temp_list[8]))/1000,
                                       "sat_z_pos" : int(float(temp_list[9]))/1000,
-                                      "quaternion_1" : float(temp_list[10]),
+                                      "quaternion_w" : float(temp_list[10]),
                                       "quaternion_i" : float(temp_list[11]),
                                       "quaternion_j" : float(temp_list[12]),
                                       "quaternion_k" : float(temp_list[13])}

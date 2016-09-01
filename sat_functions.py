@@ -14,11 +14,13 @@ def create_and_draw_objects():
                    up=(0,0,1))
 
     satelite = box(pos=(0,0,0), length = 100,  width=100, height=100,
-                   color=color.red, make_trail=true)
+                   color=color.red, make_trail=False)
 
-    star_arrow = arrow(pos=(0,0,0), axis=(0,1,0), shaftwidth=100, make_trail=True)
+    sat_axis_x = arrow(pos=(0,0,0), axis=(1,0,0), shaftwidth=100, make_trail=False, color=color.green)
+    sat_axis_y = arrow(pos=(0,0,0), axis=(0,1,0), shaftwidth=100, make_trail=False, color=color.red)
+    sat_axis_z = arrow(pos=(0,0,0), axis=(0,0,1), shaftwidth=100, make_trail=False, color=color.blue)
 
-    return satelite, earth, time, star_arrow
+    return satelite, earth, time, sat_axis_x, sat_axis_y, sat_axis_z
 
 
 def draw_lights():
@@ -27,6 +29,41 @@ def draw_lights():
     lamp2 = local_light(pos=(0,50000,0), color=color.white)
     lamp3 = local_light(pos=(-50000,0,0), color=color.white)
     lamp4 = local_light(pos=(50000,0,0), color=color.white)
+
+def calc_sat_axis(satelite, earth, quaternion, declination, right_ascension):
+    """calculates the direction of the arrow that points to the star"""
+    
+    x_axis = vector_rotation_by_quaternion([1,0,0],quaternion)
+        
+    z_axis = calc_z_axis(declination, right_ascension)
+
+    y_axis = rotate(x_axis, angle=math.radians(90), axis=z_axis)
+
+    return [x_axis, y_axis, z_axis]
+
+def quaternion_mult(q,r):
+    """does the hamilton product calculation"""
+    return [r[0]*q[0]-r[1]*q[1]-r[2]*q[2]-r[3]*q[3],
+            r[0]*q[1]+r[1]*q[0]-r[2]*q[3]+r[3]*q[2],
+            r[0]*q[2]+r[1]*q[3]+r[2]*q[0]-r[3]*q[1],
+            r[0]*q[3]-r[1]*q[2]+r[2]*q[1]+r[3]*q[0]]
+
+def vector_rotation_by_quaternion(v,q):
+    """receives a vector and a quaternion as arguments and returns the resulting vector from the hamilton product"""
+    r = [0]+v
+    q_conj = [q[0],-1*q[1],-1*q[2],-1*q[3]]
+    vector_as_list = quaternion_mult(quaternion_mult(q,r),q_conj)[1:]
+    end_vector = vector(vector_as_list[0], vector_as_list[1], vector_as_list[2])
+
+    return end_vector
+
+def calc_z_axis(declination, right_ascension):
+    """calcs the z_axis using declination and right_ascension"""
+    declination_vector = rotate((1,0,0), angle=declination, axis=(0,-1,0))
+    right_ascension_vector = rotate((1,0,0), angle=right_ascension, axis=(0,0,1))
+    z_axis = declination_vector + right_ascension_vector
+
+    return z_axis
 
 def convert_julian_to_real_time(julian_time):
     """converts a julian day starting from 1/1/2000 to normal time"""
@@ -51,55 +88,6 @@ def convert_julian_to_real_time(julian_time):
 
     return day, hours, minutes
 
-def calc_arrow_pos_and_axis(star_arrow, satelite, earth, info_entry):
-    """calculates the position and direction of the arrow that points to the star"""
-    star_arrow.pos = satelite.pos
-    
-    declination = 0000.357728
-    right_ascension = 0001.338847
-    declination_vector = rotate((1,0,0), angle=declination, axis=(0,-1,0))
-    right_ascension_vector = rotate((1,0,0), angle=right_ascension, axis=(0,0,1))
-
-    star_direction = declination_vector + right_ascension_vector
-    """
-    if info_entry <= 250:
-        star_arrow.axis = star_direction*10000
-    elif 250 < info_entry <=500:
-        star_arrow.axis = star_direction*15000
-    elif 500 < info_entry <=750:
-        star_arrow.axis = star_direction*20000
-    elif 750 < info_entry <=1000:
-        star_arrow.axis = star_direction*30000
-    elif 1000 < info_entry <=1250:
-        star_arrow.axis = star_direction*40000
-    elif 1250 < info_entry <=1500:
-        star_arrow.axis = star_direction*50000
-    elif 1500 < info_entry <=1750:
-        star_arrow.axis = star_direction*75000
-    elif 1750 < info_entry <=2000:
-        star_arrow.axis = star_direction*100000
-    elif 2000 < info_entry <=2250:
-        star_arrow.axis = star_direction*150000
-    elif info_entry >2250:
-        star_arrow.axis = star_direction*200000
-    """    
-    star_arrow.axis = star_direction*40000
-    if check_collision_arrow_earth(star_arrow, earth):
-        star_arrow.visible = False
-    else:
-        star_arrow.visible = True
-    
-    return star_arrow.pos, star_arrow.axis
-
-def check_collision_arrow_earth(star_arrow, earth):
-    """checks if the arrow goes through the earth, and if it does, it becomes invisible"""
-    projection = proj(-star_arrow.pos, star_arrow.axis)
-    closest_point_to_earth = star_arrow.pos + projection
-    if mag(closest_point_to_earth) <= earth.radius:
-        return True
-    else:
-        return False
-
 def end_loop(satelite):
     """if there is no more positional info the satelite stops and turns green"""
     
@@ -107,3 +95,21 @@ def end_loop(satelite):
         sleep(0.01)
         satelite.color = color.green
         
+"""
+if check_collision_arrow_earth(star_arrow, earth):
+    #should be false
+    star_arrow.visible = True
+else:
+    star_arrow.visible = True
+    
+return star_arrow.pos, star_arrow.axis
+
+def check_collision_arrow_earth(star_arrow, earth):
+    #checks if the arrow goes through the earth, and if it does, it becomes invisible
+    projection = proj(-star_arrow.pos, star_arrow.axis)
+    closest_point_to_earth = star_arrow.pos + projection
+    if mag(closest_point_to_earth) <= earth.radius:
+        return True
+    else:
+        return False
+"""
