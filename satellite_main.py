@@ -20,17 +20,19 @@ def main():
                         sat_info_dict["Info Entry "+str(info_entry)]["sat_y_pos"],
                         sat_info_dict["Info Entry "+str(info_entry)]["sat_z_pos"])
         
+        sat_axis_x.pos = satelite.pos
+        sat_axis_y.pos = satelite.pos
+        sat_axis_z.pos = satelite.pos
+        
         quaternion = [sat_info_dict["Info Entry "+str(info_entry)]["quaternion_w"],
                       sat_info_dict["Info Entry "+str(info_entry)]["quaternion_i"],
                       sat_info_dict["Info Entry "+str(info_entry)]["quaternion_j"],
                       sat_info_dict["Info Entry "+str(info_entry)]["quaternion_k"]]
         
-        sat_axis_x.pos = satelite.pos
-        sat_axis_y.pos = satelite.pos
-        sat_axis_z.pos = satelite.pos
+        declination = sat_info_dict["Info Entry "+str(info_entry)]["declination"]
+        right_ascension = sat_info_dict["Info Entry "+str(info_entry)]["right_ascension"]
         
-        sat_axis_xyz = sat_functions.calc_sat_axis(satelite, earth, quaternion,sat_info_dict["Info Entry "+str(info_entry)]["declination"],
-                                                                           sat_info_dict["Info Entry "+str(info_entry)]["right_ascension"])
+        sat_axis_xyz = sat_functions.calc_sat_axis(satelite, earth, quaternion, declination, right_ascension)
 
         sat_axis_x.axis= sat_axis_xyz[0]*20000
         sat_axis_y.axis= sat_axis_xyz[1]*20000
