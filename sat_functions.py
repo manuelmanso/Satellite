@@ -24,14 +24,15 @@ def create_and_draw_objects():
 
 
 def draw_lights():
-    """lights the scene"""
+    """lights the earth so it isn't too dark"""
+    
     lamp1 = local_light(pos=(0,-50000,0), color=color.white)
     lamp2 = local_light(pos=(0,50000,0), color=color.white)
     lamp3 = local_light(pos=(-50000,0,0), color=color.white)
     lamp4 = local_light(pos=(50000,0,0), color=color.white)
 
 def calc_sat_axis(satelite, earth, quaternion, declination, right_ascension):
-    """calculates the direction of the arrow that points to the star"""
+    """calculates the axis of the satelite using their specific functions"""
     
     z_axis = calc_z_axis(declination, right_ascension, quaternion)
 
@@ -44,6 +45,7 @@ def calc_sat_axis(satelite, earth, quaternion, declination, right_ascension):
 
 def quaternion_mult(q,r):
     """does the hamilton product calculation"""
+    
     return [r[0]*q[0]-r[1]*q[1]-r[2]*q[2]-r[3]*q[3],
             r[0]*q[1]+r[1]*q[0]-r[2]*q[3]+r[3]*q[2],
             r[0]*q[2]+r[1]*q[3]+r[2]*q[0]-r[3]*q[1],
@@ -51,6 +53,7 @@ def quaternion_mult(q,r):
 
 def vector_rotation_by_quaternion(v,q):
     """receives a vector and a quaternion as arguments and returns the resulting vector from the hamilton product"""
+    
     r = [0]+v
     q_conj = [q[0],-1*q[1],-1*q[2],-1*q[3]]
     vector_as_list = quaternion_mult(quaternion_mult(q,r),q_conj)[1:]
@@ -59,6 +62,9 @@ def vector_rotation_by_quaternion(v,q):
     return end_vector
 
 def calc_x_axis(temp_x_axis, z_axis):
+    """calcs the angle difference between the z and the x_axis and then changes
+    the angle to 90 degrees to make them orthogonal"""
+    
     start_angle = math.degrees((diff_angle(temp_x_axis,z_axis)))
 
     angle_change = 90.0 - start_angle
@@ -69,6 +75,7 @@ def calc_x_axis(temp_x_axis, z_axis):
     
 def calc_z_axis(declination, right_ascension, quaternion):
     """calcs the z_axis using declination and right_ascension"""
+    
     declination_vector = rotate((1,0,0), angle=declination, axis=(0,-1,0))
     right_ascension_vector = rotate((1,0,0), angle=right_ascension, axis=(0,0,1))
     z_axis = norm(declination_vector + right_ascension_vector)
@@ -77,6 +84,7 @@ def calc_z_axis(declination, right_ascension, quaternion):
 
 def convert_julian_to_real_time(julian_time):
     """converts a julian day starting from 1/1/2000 to normal time"""
+    
     julian_day = int(julian_time)
     if julian_day == 6896:
         day = "18 Nov 2018"
@@ -104,22 +112,3 @@ def end_loop(satelite):
     while True:
         sleep(0.01)
         satelite.color = color.green
-        
-"""
-if check_collision_arrow_earth(star_arrow, earth):
-    #should be false
-    star_arrow.visible = True
-else:
-    star_arrow.visible = True
-    
-return star_arrow.pos, star_arrow.axis
-
-def check_collision_arrow_earth(star_arrow, earth):
-    #checks if the arrow goes through the earth, and if it does, it becomes invisible
-    projection = proj(-star_arrow.pos, star_arrow.axis)
-    closest_point_to_earth = star_arrow.pos + projection
-    if mag(closest_point_to_earth) <= earth.radius:
-        return True
-    else:
-        return False
-"""
