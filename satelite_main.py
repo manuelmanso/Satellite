@@ -10,9 +10,9 @@ def main():
     satelite, earth, time, sat_axis_x, sat_axis_y, sat_axis_z = sat_functions.create_and_draw_objects()
     
     info_entry = 0
-    while info_entry < 5799:
+    while info_entry < len(sat_info_dict):
     
-        sleep(0.0001)
+        sleep(0.001)
         info_entry += 1
     
 

@@ -33,11 +33,12 @@ def draw_lights():
 def calc_sat_axis(satelite, earth, quaternion, declination, right_ascension):
     """calculates the direction of the arrow that points to the star"""
     
-    x_axis = vector_rotation_by_quaternion([1,0,0],quaternion)
-        
-    z_axis = calc_z_axis(declination, right_ascension)
+    z_axis = calc_z_axis(declination, right_ascension, quaternion)
 
-    y_axis = rotate(x_axis, angle=math.radians(90), axis=z_axis)
+    temp_x_axis = vector_rotation_by_quaternion([1,0,0],quaternion)
+    x_axis = calc_x_axis(temp_x_axis, z_axis)
+    
+    y_axis= cross(x_axis, z_axis)
 
     return [x_axis, y_axis, z_axis]
 
@@ -57,11 +58,20 @@ def vector_rotation_by_quaternion(v,q):
 
     return end_vector
 
-def calc_z_axis(declination, right_ascension):
+def calc_x_axis(temp_x_axis, z_axis):
+    start_angle = math.degrees((diff_angle(temp_x_axis,z_axis)))
+
+    angle_change = 90.0 - start_angle
+
+    x_axis = rotate(temp_x_axis, angle=radians(angle_change), axis=cross(z_axis,temp_x_axis))
+    
+    return x_axis
+    
+def calc_z_axis(declination, right_ascension, quaternion):
     """calcs the z_axis using declination and right_ascension"""
     declination_vector = rotate((1,0,0), angle=declination, axis=(0,-1,0))
     right_ascension_vector = rotate((1,0,0), angle=right_ascension, axis=(0,0,1))
-    z_axis = declination_vector + right_ascension_vector
+    z_axis = norm(declination_vector + right_ascension_vector)
 
     return z_axis
 
