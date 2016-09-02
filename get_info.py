@@ -1,7 +1,7 @@
 import os
 
 def get_info():
-    with open(os.path.expanduser("~/Desktop/satelite/dados_satelite.txt")) as textfile:
+    with open(os.path.expanduser("~/Desktop/satellite/satellite_data.txt")) as textfile:
         data = textfile.read().replace('\n', '').split(" ")
 
     return create_sat_info_dict(data)
