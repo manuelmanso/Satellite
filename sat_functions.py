@@ -20,7 +20,7 @@ def create_and_draw_objects():
     sat_axis_y = arrow(pos=(0,0,0), axis=(0,1,0), shaftwidth=100, make_trail=False, color=color.red)
     sat_axis_z = arrow(pos=(0,0,0), axis=(0,0,1), shaftwidth=100, make_trail=False, color=color.blue)
 
-    return satelite, earth, time, sat_axis_x, sat_axis_y, sat_axis_z
+    return satelite, time, sat_axis_x, sat_axis_y, sat_axis_z
 
 
 def draw_lights():
@@ -31,7 +31,7 @@ def draw_lights():
     lamp3 = local_light(pos=(-50000,0,0), color=color.white)
     lamp4 = local_light(pos=(50000,0,0), color=color.white)
 
-def calc_sat_axis(satelite, earth, quaternion, declination, right_ascension):
+def calc_sat_axis(quaternion, declination, right_ascension):
     """calculates the axis of the satelite using their specific functions"""
     
     z_axis = calc_z_axis(declination, right_ascension, quaternion)

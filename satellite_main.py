@@ -7,7 +7,7 @@ import sat_functions
 def main():
     sat_info_dict = get_info.get_info()
 
-    satelite, earth, time, sat_axis_x, sat_axis_y, sat_axis_z = sat_functions.create_and_draw_objects()
+    satelite, time, sat_axis_x, sat_axis_y, sat_axis_z = sat_functions.create_and_draw_objects()
     
     info_entry = 0
     while info_entry < len(sat_info_dict):
@@ -32,7 +32,7 @@ def main():
         declination = sat_info_dict["Info Entry "+str(info_entry)]["declination"]
         right_ascension = sat_info_dict["Info Entry "+str(info_entry)]["right_ascension"]
         
-        sat_axis_xyz = sat_functions.calc_sat_axis(satelite, earth, quaternion, declination, right_ascension)
+        sat_axis_xyz = sat_functions.calc_sat_axis(quaternion, declination, right_ascension)
 
         sat_axis_x.axis= sat_axis_xyz[0]*20000
         sat_axis_y.axis= sat_axis_xyz[1]*20000
